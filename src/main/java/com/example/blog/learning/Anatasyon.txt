@@ -1,0 +1,42 @@
+@Value anotasyonuyla bir çok veri tipini nesnemize enjekte edebiliriz. Bunları bir örnek üzerinde sırayla inceleyelim.
+
+
+@RestController
+public class ValueController {
+
+    @Value("This is hard coded value")
+    private String value1;
+
+    @Value("${value.in.properties.file}")
+    private String value2;
+
+    @Value("${value.does.not.exist.in.properties.file: default value for value3}")
+    private String value3;
+
+    @Value("${values.as.list}")
+    private List<String> listValues;
+
+    @Value("#{${map.values}}")
+    private Map<String, String> mapValues;
+
+    @GetMapping("/test")
+    public String showValue() {
+        System.out.println("value1: " + value1);
+        System.out.println("value2: " + value2);
+        System.out.println("value3: " + value3);
+        System.out.println("list values: " + listValues);
+        System.out.println("map values: " + mapValues);
+
+        return value1 + "   ---   " + value2 + "   ---   " + value3 + "   ---   " + listValues
+                + "   ---   " + mapValues;
+    }
+}
+
+value.in.properties.file=value in properties file
+values.as.list=value3,value4,value5
+map.values={mapKey1: "mapValue1", mapKey2: "mapValue2", mapKey3: "mapValue3"}
+
+4. satırdaki kullanım, statik veri tanımlamaya örnektir. value1 değişkeni yazdırıldığında, This is hard coded value şeklinde olacaktır.
+7. satırdaki, $ işaretiyle başlayan ifadeler application.properties
+
+7. satırdaki, $ işaretiyle başlayan ifadeler application.properties dosyasında key olarak kullanılmış verileri almamızı sağlar. value2 değişkeni yazdırıldığında, value in properties file şeklinde olacaktır.
