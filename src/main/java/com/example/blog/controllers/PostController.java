@@ -6,11 +6,19 @@ import com.example.blog.payloads.PostDto;
 import com.example.blog.payloads.PostResponse;
 import com.example.blog.services.FileService;
 import com.example.blog.services.PostService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -59,8 +67,8 @@ public class PostController {
     public ResponseEntity<PostResponse<PostDto>> getAllPosts(@RequestParam(value = "pageNumber", defaultValue = AppConstant.PAGE_NUMBER, required = false) Integer pageNumber,
                                                              @RequestParam(value = "pageSize", defaultValue = AppConstant.PAGE_SIZE, required = false) Integer pageSize,
                                                              @RequestParam(value = "sortBy", defaultValue = AppConstant.SORT_BY, required = false) String sortBy,
-                                                             @RequestParam(value = "sortDir",defaultValue = AppConstant.SORT_DIR,required = false)String sortDir) {
-        return new ResponseEntity<PostResponse<PostDto>>(this.postService.getAllPosts(pageNumber, pageSize, sortBy,sortDir), HttpStatus.OK);
+                                                             @RequestParam(value = "sortDir", defaultValue = AppConstant.SORT_DIR, required = false) String sortDir) {
+        return new ResponseEntity<PostResponse<PostDto>>(this.postService.getAllPosts(pageNumber, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
 
     @GetMapping("/posts/{postId}")
@@ -80,9 +88,30 @@ public class PostController {
         PostDto updatedPostDto = this.postService.updatePost(postDto, postId);
         return new ResponseEntity<PostDto>(updatedPostDto, HttpStatus.OK);
     }
+
     //search
     @GetMapping("/posts/search/{keywords}")
-    public ResponseEntity<List<PostDto>>searchPostByTitle(@PathVariable("keywords")String keywords){
-        return new ResponseEntity<List<PostDto>>(this.postService.searchPosts(keywords),HttpStatus.OK);
+    public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable("keywords") String keywords) {
+        return new ResponseEntity<List<PostDto>>(this.postService.searchPosts(keywords), HttpStatus.OK);
+    }
+
+
+    //post image upload
+    @SneakyThrows
+    @PostMapping("/post/image/upload/{postId}")
+    public ResponseEntity<PostDto> uploadPostImage(@RequestParam("image") MultipartFile file, @PathVariable("postId") Integer postId) throws IOException {
+        PostDto postDto = this.postService.getPostById(postId);
+
+        String filename = this.fileService.uploadImage(path, file);
+        postDto.setImageName(filename);
+        PostDto updatedPostDto = postService.updatePost(postDto, postId);
+        return  new ResponseEntity<PostDto>(updatedPostDto,HttpStatus.OK);
+    }
+    @SneakyThrows
+    @GetMapping(value = "post/image/{imageName}",produces = MediaType.IMAGE_JPEG_VALUE)
+    public void dowlandImage(@PathVariable("imageName")String imageName, HttpServletResponse response){
+        InputStream resurce=this.fileService.getResurce(path,imageName);
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resurce,response.getOutputStream());
     }
 }
