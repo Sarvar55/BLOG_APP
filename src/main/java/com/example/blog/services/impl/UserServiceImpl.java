@@ -3,6 +3,7 @@ package com.example.blog.services.impl;
 import com.example.blog.entities.User;
 import com.example.blog.exceptions.ResourceNotFoundException;
 import com.example.blog.payloads.UserDto;
+import com.example.blog.payloads.UserRegisterRequest;
 import com.example.blog.repositories.UserRepo;
 import com.example.blog.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -98,5 +99,9 @@ public class UserServiceImpl implements UserService {
 //        userDto.setAbout(user.getAbout());
 //        userDto.setPassword(user.getPassword());
         return userDto;
+    }
+    public UserRegisterRequest getByUserEmail(String email){
+        User user = this.userRepo.findByEmail(email);
+        return new UserRegisterRequest(user.getName(),user.getEmail(),user.getPassword());
     }
 }
