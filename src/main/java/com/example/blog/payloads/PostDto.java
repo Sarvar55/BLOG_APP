@@ -1,10 +1,12 @@
 package com.example.blog.payloads;
 
 import com.example.blog.entities.Category;
+import com.example.blog.entities.Comment;
 import com.example.blog.entities.User;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * @project: Blog
@@ -28,5 +30,7 @@ public class PostDto {
     private CategoryDto category;
 
     private UserDto user;
+
+    private Set<CommentDto> comments;
 
 }

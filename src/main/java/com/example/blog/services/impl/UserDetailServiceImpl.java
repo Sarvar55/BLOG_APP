@@ -3,7 +3,6 @@ package com.example.blog.services.impl;
 import com.example.blog.entities.User;
 import com.example.blog.payloads.UserDto;
 import com.example.blog.repositories.UserRepo;
-import com.example.blog.security.JwtUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
