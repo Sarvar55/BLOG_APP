@@ -25,6 +25,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<ApiResponse>(response, HttpStatus.NOT_FOUND);//status code 404
     }
 
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiResponse> handleApiException(ApiException ex) {
+        ApiResponse response = new ApiResponse(ex.getMessage(), false);
+        return new ResponseEntity<ApiResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleMethodArgsValidException(MethodArgumentNotValidException ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -36,5 +42,6 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<Map<String, String>>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
 
 }

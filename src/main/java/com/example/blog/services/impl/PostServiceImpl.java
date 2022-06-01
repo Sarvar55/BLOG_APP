@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private final PostRepo postRepo;
-    private final ModelMapper modelMapper;
     private final UserRepo userRepo;
+    private final ModelMapper modelMapper;
     private final CategoryRepo categoryRepo;
 
     public PostServiceImpl(PostRepo postRepo, ModelMapper modelMapper, UserRepo userRepo, CategoryRepo categoryRepo) {
@@ -39,7 +39,6 @@ public class PostServiceImpl implements PostService {
         this.userRepo = userRepo;
         this.categoryRepo = categoryRepo;
     }
-
 
     @Override
     public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId) {
@@ -53,7 +52,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "Category id", categoryId));
 
         Post post = this.modelMapper.map(postDto, Post.class);
-        post.setImageName("default.png");
+        post.setImageName(postDto.getImageName());
         post.setAddedDate(new Date());
         post.setUser(user);
         post.setCategory(category);
@@ -129,7 +128,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "Category id", categoryId));
         List<Post> posts = this.postRepo.findByCategory(category);
 
-        return posts
+        return   posts
                 .stream()
                 .map(post -> this.modelMapper.map(post, PostDto.class))
                 .collect(Collectors.toList());

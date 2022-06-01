@@ -6,6 +6,7 @@ import com.example.blog.payloads.UserDto;
 import com.example.blog.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -45,9 +46,10 @@ public class UserController {
 //        return new ResponseEntity(Map.of("message", "User deleted Succesfully"), HttpStatus.OK);
 //    }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId")
-                                                          Integer userId)  {
+                                                          Integer userId) {
         this.userService.deleteUser(userId);//ResourceNotFoundException
         return new ResponseEntity<ApiResponse>(new ApiResponse("User deleted Succesfully", true), HttpStatus.OK);
     }

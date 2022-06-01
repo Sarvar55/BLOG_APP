@@ -11,6 +11,9 @@ import java.util.List;
  * @author: Sarvar55
  */
 public interface UserService {
+
+    UserDto registerNewUser(UserDto userDto);
+
     UserDto createUser(UserDto userDto);
 
     UserDto updateUser(UserDto userDto, Integer userId);
@@ -21,5 +24,4 @@ public interface UserService {
 
     void deleteUser(Integer userId);
 
-    UserRegisterRequest getByUserEmail(String userName);
 }

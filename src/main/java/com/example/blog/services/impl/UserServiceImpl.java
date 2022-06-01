@@ -1,12 +1,15 @@
 package com.example.blog.services.impl;
 
+import com.example.blog.config.AppConstant;
+import com.example.blog.entities.Role;
 import com.example.blog.entities.User;
 import com.example.blog.exceptions.ResourceNotFoundException;
 import com.example.blog.payloads.UserDto;
-import com.example.blog.payloads.UserRegisterRequest;
+import com.example.blog.repositories.RoleRepo;
 import com.example.blog.repositories.UserRepo;
 import com.example.blog.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -22,10 +25,31 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepo roleRepo;
 
-    public UserServiceImpl(UserRepo userRepo, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepo userRepo, ModelMapper modelMapper, PasswordEncoder passwordEncoder, RoleRepo roleRepo) {
         this.userRepo = userRepo;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepo = roleRepo;
+    }
+
+    @Override
+    public UserDto registerNewUser(UserDto userDto) {
+        User user = this.modelMapper.map(userDto, User.class);
+
+        user.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
+
+        //roles
+        Role role = this.roleRepo.findById(AppConstant.NORMAL_USER).get();
+
+        user.getRoles()
+                .add(role);
+
+        User newUser = this.userRepo.save(user);
+
+        return this.modelMapper.map(newUser, UserDto.class);
     }
 
     @Override
@@ -64,9 +88,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<User> users = this.userRepo.findAll();
-        return users.stream()
-                .map(this::userToDto)
+        return this.userRepo
+                .findAll()
+                .stream()
+                .map(user -> this.modelMapper.map(user, UserDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -100,8 +125,5 @@ public class UserServiceImpl implements UserService {
 //        userDto.setPassword(user.getPassword());
         return userDto;
     }
-    public UserRegisterRequest getByUserEmail(String email){
-        User user = this.userRepo.findByEmail(email);
-        return new UserRegisterRequest(user.getName(),user.getEmail(),user.getPassword());
-    }
+
 }

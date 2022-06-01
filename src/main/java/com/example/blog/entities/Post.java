@@ -9,7 +9,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
-//src/main/java/com/example/blog/entities
 /**
  * @project: Blog
  * @author: Sarvar55
@@ -38,6 +37,7 @@ public class Post {
     @Column(length = 10000)
     private String content;
 
+    @Column(name = "image_name")
     private String imageName;
 
     private Date addedDate;

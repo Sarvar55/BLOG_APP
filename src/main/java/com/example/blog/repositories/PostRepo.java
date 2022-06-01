@@ -16,14 +16,12 @@ import java.util.List;
  */
 public interface PostRepo extends JpaRepository<Post, Integer> {
 
-
     List<Post> findByUser(User user);
 
     List<Post> findByCategory(Category category);
 
     @Query("Select post from Post post where post.title like %:title%")
     List<Post> findByTitleContaining(@Param("title")String title);
-
 
 
 

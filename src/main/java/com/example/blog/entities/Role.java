@@ -10,17 +10,14 @@ import javax.persistence.*;
  * @author: Sarvar55
  */
 @Entity
-@Table(name = "comments")
+@Table(name = "role")
 @Getter
 @Setter
-public class Comment {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer commentId;
-    private String content;
+    private Integer roleId;
 
-    @ManyToOne
-    @JoinColumn(name = "post_Id")
-    private Post post;
+    private String name;
 
 }
